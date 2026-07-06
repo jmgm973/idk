@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathLearn - Master Mathematics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* === MAIN CONTENT SECTION === */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            transition: opacity 0.5s ease;
+        }
+
+        .content-section.hidden {
+            display: none;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-tabs button {
+            padding: 18px 40px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.15em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-tabs button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-tabs button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .content-area.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .content-area h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .content-area h3 {
+            color: #764ba2;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .content-area p {
+            line-height: 1.9;
+            color: #333;
+            margin-bottom: 18px;
+            font-size: 1.1em;
+        }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .topic-card {
+            background: #f8f9fa;
+            padding: 28px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        .topic-card h4 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.25em;
+        }
+
+        .topic-card p {
+            font-size: 1.05em;
+            margin: 0;
+        }
+
+        .formula {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            padding: 18px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            font-size: 1.1em;
+        }
+
+        .lesson-text {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            line-height: 1.95;
+            font-size: 1.05em;
+        }
+
+        /* === CALCULATOR SECTION === */
+        .calculator-container {
+            background: #f8f9fa;
+            padding: 35px;
+            border-radius: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .calculator-container h3 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .calc-display {
+            background: #333;
+            color: #0f0;
+            font-size: 2em;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: right;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            min-height: 60px;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .calc-btn {
+            padding: 20px;
+            font-size: 1.4em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .calc-btn:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .calc-btn.operator {
+            background: #ff6b6b;
+        }
+
+        .calc-btn.operator:hover {
+            background: #ee5a52;
+        }
+
+        .calc-btn.equals {
+            background: #51cf66;
+            grid-column: span 2;
+        }
+
+        .calc-btn.equals:hover {
+            background: #40c057;
+        }
+
+        .calc-btn.clear {
+            background: #ffd43b;
+            color: #333;
+            grid-column: span 2;
+        }
+
+        .calc-btn.clear:hover {
+            background: #ffca3d;
+        }
+
+        /* === GREY DOT === */
+        .secret-dot {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #888;
+            border-radius: 50%;
+            cursor: pointer;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .secret-dot:hover {
+            background: #666;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            transform: scale(1.3);
+        }
+
+        /* === 3D SCENE === */
+        .scene-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            z-index: 200;
+        }
+
+        .scene-container.active {
+            display: block;
+        }
+
+        #canvas3d {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .exit-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #888;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            z-index: 300;
+            pointer-events: none;
+        }
+
+        .fade-to-black {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 300;
+            animation: fadeToBlack 2s ease-in forwards;
+        }
+
+        @keyframes fadeToBlack {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content Section -->
+    <div class="content-section" id="mainContent">
+        <header>
+            <h1>🧮 MathLearn</h1>
+            <p>Your complete guide to mastering mathematics</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-btn active" data-section="algebra">Algebra</button>
+            <button class="nav-btn" data-section="geometry">Geometry</button>
+            <button class="nav-btn" data-section="calculus">Calculus</button>
+            <button class="nav-btn" data-section="statistics">Statistics</button>
+            <button class="nav-btn" data-section="calc">Calculator</button>
+        </div>
+
+        <!-- Algebra Section -->
+        <div class="content-area active" id="algebra">
+            <h2>Algebra Fundamentals</h2>
+            <p>Algebra is the foundation of modern mathematics. It uses letters and symbols to represent unknown quantities and establish relationships between them. From ancient civilizations to modern times, algebraic thinking has been essential to solving real-world problems in engineering, physics, economics, and countless other fields.</p>
+            
+            <h3>Linear Equations</h3>
+            <p>A linear equation is an equation of the first degree, meaning the variable is raised to the power of 1. Linear equations are among the most fundamental concepts in algebra and appear everywhere in practical applications.</p>
+            <div class="lesson-text">
+                Linear equations form the basis for understanding more complex mathematical relationships. They describe situations where there is a constant rate of change. For example, if you drive a car at a constant speed, the distance traveled is a linear function of time. The general form of a linear equation is ax + b = 0, where a and b are constants and a ≠ 0.
+            </div>
+            <div class="formula">ax + b = 0, where a ≠ 0</div>
+            <p>To solve a linear equation, we use the principle of maintaining equality on both sides:</p>
+            <div class="formula">x = -b/a</div>
+            <p>For example, if we have 3x + 6 = 0, then x = -6/3 = -2. We can verify: 3(-2) + 6 = -6 + 6 = 0 ✓</p>
+
+            <h3>Quadratic Equations</h3>
+            <p>A quadratic equation contains a variable raised to the second power. These equations are crucial in physics, engineering, and many areas of mathematics. They describe phenomena such as projectile motion, optimization problems, and parabolic paths.</p>
+            <div class="lesson-text">
+                Quadratic equations have the general form ax² + bx + c = 0, where a ≠ 0. The term "quadratic" comes from the Latin word "quadratus," meaning square. These equations can have zero, one, or two real solutions depending on the discriminant (the value under the square root in the quadratic formula). Understanding quadratic equations helps us solve many practical problems, such as finding the maximum height of a projectile or optimizing areas and volumes.
+            </div>
+            <div class="formula">ax² + bx + c = 0, where a ≠ 0</div>
+            <p>Solution using the quadratic formula:</p>
+            <div class="formula">x = (-b ± √(b² - 4ac)) / 2a</div>
+            <p>The expression b² - 4ac is called the discriminant. If it's positive, we get two solutions; if it's zero, we get one solution; if it's negative, we get no real solutions.</p>
+
+            <h3>Polynomials</h3>
+            <p>Polynomials are expressions consisting of variables and coefficients combined using addition, subtraction, and multiplication. They are fundamental in algebra and have applications in calculus, physics, and computer science.</p>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <h4>Addition & Subtraction</h4>
+                    <p>Combine like terms by adding or subtracting coefficients of the same degree. For example: (3x² + 2x + 1) + (x² + 3x + 2) = 4x² + 5x + 3. The key is to identify terms with the same variable raised to the same power.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Multiplication</h4>
+                    <p>Use the distributive property and combine like terms in the result. When multiplying polynomials, each term in the first polynomial must be multiplied by each term in the second polynomial. For example: (x + 2)(x + 3) = x² + 3x + 2x + 6 = x² + 5x + 6.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Factoring</h4>
+                    <p>Breaking down polynomials into their component factors. This is the reverse of multiplication and is essential for solving equations. For example: x² + 5x + 6 = (x + 2)(x + 3). Factoring helps us find roots of equations and simplify expressions.</p>
+                </div>
+            </div>
+
+            <h3>Exponents and Radicals</h3>
+            <p>Exponents represent repeated multiplication, while radicals are the inverse operation. These concepts are essential for higher mathematics and scientific notation.</p>
+            <div class="lesson-text">
+                Understanding exponents allows us to work with very large and very small numbers efficiently. For instance, the speed of light is approximately 3 × 10⁸ meters per second. Radicals, such as square roots and cube roots, are used to find the original value when we know its power. The relationship between exponents and radicals is crucial: √a = a^(1/2), ³√a = a^(1/3), and so on.
+            </div>
+        </div>
+
+        <!-- Geometry Section -->
+        <div class="content-area" id="geometry">
+            <h2>Geometry Essentials</h2>
+            <p>Geometry studies shapes, sizes, and properties of figures and spaces. It bridges abstract mathematics with visual representation and has been studied for thousands of years. From ancient Greek mathematicians to modern computer graphics, geometry remains essential to understanding the physical world around us.</p>
+
+            <h3>Basic Shapes and Perimeter</h3>
+            <p>Understanding basic 2D shapes is the foundation of geometry. Each shape has unique properties that determine its perimeter and area.</p>
+            <div class="lesson-text">
+                The perimeter of a shape is the total distance around its boundary. For different shapes, we calculate perimeter differently. For example, a square with side length s has a perimeter of 4s, while a circle (which we call circumference) has a perimeter of 2πr where r is the radius. Understanding these fundamental measurements helps us solve practical problems like calculating how much fencing we need for a garden or how much material is required to trim the edge of an object.
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <h4>Triangle</h4>
+                    <div class="formula">Area = (base × height) / 2</div>
+                    <div class="formula">Perimeter = a + b + c</div>
+                    <p>Triangles are the simplest polygon and have special properties. They appear throughout nature and engineering.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Circle</h4>
+                    <div class="formula">Area = πr²</div>
+                    <div class="formula">Circumference = 2πr</div>
+                    <p>The circle is the most symmetric 2D shape. All points on a circle are equidistant from the center.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Rectangle</h4>
+                    <div class="formula">Area = length × width</div>
+                    <div class="formula">Perimeter = 2(l + w)</div>
+                    <p>Rectangles are fundamental shapes in architecture, design, and everyday objects.</p>
+                </div>
+            </div>
+
+            <h3>3D Shapes and Volume</h3>
+            <p>Three-dimensional objects surround us. Understanding their properties is crucial for engineering, architecture, and physics.</p>
+            <div class="lesson-text">
+                Volume measures the amount of space an object occupies, crucial for storing, shipping, and designing containers. Surface area measures the total area covering a 3D object, important for calculating material requirements or heat transfer in physics. These calculations are fundamental in industries ranging from construction to pharmaceutical manufacturing.
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <h4>Sphere</h4>
+                    <div class="formula">Volume = (4/3)πr³</div>
+                    <div class="formula">Surface Area = 4πr²</div>
+                    <p>Spheres are found throughout nature, from planets to water droplets. They are the most efficient shape for enclosing volume with minimal surface area.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Cube</h4>
+                    <div class="formula">Volume = s³</div>
+                    <div class="formula">Surface Area = 6s²</div>
+                    <p>Cubes are regular 3D shapes with all sides equal. They form the basis for many structural designs and space-filling arrangements.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Cylinder</h4>
+                    <div class="formula">Volume = πr²h</div>
+                    <div class="formula">Surface Area = 2πr² + 2πrh</div>
+                    <p>Cylinders are among the most common shapes in engineering, appearing in pipes, containers, and mechanical systems.</p>
+                </div>
+            </div>
+
+            <h3>Angles and Trigonometry</h3>
+            <p>Angles are fundamental to geometry and trigonometry. Understanding angle relationships helps us solve complex geometric problems.</p>
+            <div class="lesson-text">
+                Angles are measured in degrees (°) or radians. A complete rotation is 360°. Right angles measure 90°, straight angles measure 180°. In a triangle, the sum of all interior angles is always 180°. Trigonometry explores the relationships between angles and sides of triangles, with applications in surveying, navigation, astronomy, and many other fields.
+            </div>
+        </div>
+
+        <!-- Calculus Section -->
+        <div class="content-area" id="calculus">
+            <h2>Calculus: Rates of Change</h2>
+            <p>Calculus enables us to analyze change and motion. It consists of two main branches: differential and integral calculus. Developed independently by Isaac Newton and Gottfried Leibniz in the late 17th century, calculus has become indispensable in physics, engineering, economics, and countless other fields.</p>
+
+            <h3>Derivatives and Rates of Change</h3>
+            <p>The derivative represents the rate of change of a function at a given point. It answers the question: how fast is something changing?</p>
+            <div class="lesson-text">
+                In practical terms, derivatives help us understand velocity (the rate of change of position), acceleration (the rate of change of velocity), and optimization (finding maximum and minimum values). For example, the derivative of a position function gives us velocity, the derivative of a velocity function gives us acceleration. Understanding rates of change is essential in physics, economics (marginal cost), biology (population growth), and many other disciplines.
+            </div>
+            <div class="formula">f'(x) = lim(h→0) [f(x+h) - f(x)] / h</div>
+            
+            <h3>Common Derivative Rules</h3>
+            <p>Rather than always computing derivatives from first principles, we use rules that make differentiation faster and easier.</p>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <h4>Power Rule</h4>
+                    <div class="formula">d/dx(xⁿ) = nxⁿ⁻¹</div>
+                    <p>This is one of the most frequently used rules. For example, the derivative of x³ is 3x².</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Product Rule</h4>
+                    <div class="formula">d/dx(uv) = u'v + uv'</div>
+                    <p>When differentiating the product of two functions, we must apply this rule carefully to get the correct result.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Chain Rule</h4>
+                    <div class="formula">d/dx(f(g(x))) = f'(g(x)) · g'(x)</div>
+                    <p>The chain rule is essential for differentiating composite functions. It's one of the most powerful tools in calculus.</p>
+                </div>
+            </div>
+
+            <h3>Integrals and Accumulation</h3>
+            <p>Integration is the reverse process of differentiation. It helps us find areas, volumes, and accumulate quantities.</p>
+            <div class="lesson-text">
+                While differentiation answers "how fast?", integration answers "how much total?" For example, if we have a velocity function, integrating it gives us the total distance traveled. Integration is used to calculate areas under curves, volumes of complex shapes, work done by a force, and many other quantities. The fundamental theorem of calculus shows the deep connection between derivatives and integrals, proving they are inverse operations of each other.
+            </div>
+            <div class="formula">∫f(x)dx = F(x) + C</div>
+            <p>where F'(x) = f(x) and C is the constant of integration. The constant C represents all possible antiderivatives of f(x).</p>
+
+            <h3>Applications of Calculus</h3>
+            <p>Calculus has countless real-world applications. In physics, it describes motion and forces. In economics, it optimizes profit and cost. In biology, it models population dynamics.</p>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="content-area" id="statistics">
+            <h2>Statistics & Probability</h2>
+            <p>Statistics allows us to collect, analyze, and interpret data. Probability helps us understand uncertainty and likelihood. In our data-driven world, statistical literacy is more important than ever, from scientific research to business decisions and public health.</p>
+
+            <h3>Descriptive Statistics</h3>
+            <p>Descriptive statistics summarize and describe the main features of a dataset using a few key numbers.</p>
+            <div class="lesson-text">
+                When we have a large dataset, we use descriptive statistics to summarize its key characteristics without having to look at every individual data point. These summary statistics help us understand the central tendency (where the data is centered) and the spread (how dispersed it is). This is fundamental to data analysis in fields ranging from medicine to market research to quality control in manufacturing.
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <h4>Mean (Average)</h4>
+                    <div class="formula">Mean = (Σx) / n</div>
+                    <p>The mean is the sum of all values divided by the number of values. It's the most commonly used measure of central tendency but can be affected by extreme values.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Median</h4>
+                    <p>The median is the middle value when data is ordered. It's resistant to extreme values and is useful when data is skewed. For even numbers of values, we take the average of the two middle values.</p>
+                </div>
+                <div class="topic-card">
+                    <h4>Mode</h4>
+                    <p>The mode is the most frequently occurring value in a dataset. A dataset can be unimodal (one mode), bimodal (two modes), or multimodal (multiple modes).</p>
+                </div>
+            </div>
+
+            <h3>Probability Fundamentals</h3>
+            <p>Probability measures the likelihood of an event occurring. It's the foundation for statistical inference and decision-making under uncertainty.</p>
+            <div class="lesson-text">
+                Probability ranges from 0 (impossible event) to 1 (certain event). Understanding probability is crucial for assessing risk, making predictions, and understanding randomness. In medical testing, probability helps us understand the accuracy of tests. In weather forecasting, probability expresses uncertainty. In finance, probability assessment guides investment decisions.
+            </div>
+            <div class="formula">P(Event) = (Favorable Outcomes) / (Total Possible Outcomes)</div>
+
+            <h3>Measures of Spread</h3>
+            <p>While measures of central tendency tell us where the data is centered, measures of spread tell us how dispersed the data is.</p>
+            <div class="lesson-text">
+                Understanding data spread is crucial for risk assessment and quality control. Two datasets can have the same mean but very different spreads. For example, in manufacturing, one production line might have more consistent output (lower spread) than another, even if both have the same average. The standard deviation is the most important measure of spread, telling us on average how far each value is from the mean.
+            </div>
+            <div class="formula">σ = √[Σ(x - μ)² / n]</div>
+            <p>This formula shows that standard deviation measures the average distance of data points from the mean. A small standard deviation indicates data clustered around the mean, while a large standard deviation indicates data spread out over a wide range.</p>
+        </div>
+
+        <!-- Calculator Section -->
+        <div class="content-area" id="calc">
+            <h2>Online Calculator</h2>
+            <div class="calculator-container">
+                <h3>Scientific Calculator</h3>
+                <div class="calc-display" id="calcDisplay">0</div>
+                <div class="calc-buttons">
+                    <button class="calc-btn clear" onclick="clearCalc()">C</button>
+                    <button class="calc-btn operator" onclick="appendToCalc('/')">/</button>
+                    <button class="calc-btn operator" onclick="appendToCalc('*')">×</button>
+                    <button class="calc-btn" onclick="appendToCalc('7')">7</button>
+                    <button class="calc-btn" onclick="appendToCalc('8')">8</button>
+                    <button class="calc-btn" onclick="appendToCalc('9')">9</button>
+                    <button class="calc-btn operator" onclick="appendToCalc('-')">−</button>
+                    <button class="calc-btn" onclick="appendToCalc('4')">4</button>
+                    <button class="calc-btn" onclick="appendToCalc('5')">5</button>
+                    <button class="calc-btn" onclick="appendToCalc('6')">6</button>
+                    <button class="calc-btn operator" onclick="appendToCalc('+')">+</button>
+                    <button class="calc-btn" onclick="appendToCalc('1')">1</button>
+                    <button class="calc-btn" onclick="appendToCalc('2')">2</button>
+                    <button class="calc-btn" onclick="appendToCalc('3')">3</button>
+                    <button class="calc-btn" onclick="appendToCalc('.')">.</button>
+                    <button class="calc-btn" onclick="appendToCalc('0')">0</button>
+                    <button class="calc-btn equals" onclick="calculateResult()">=</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secret Grey Dot -->
+    <div class="secret-dot" id="secretDot" title="Click to enter the 3D experience"></div>
+
+    <!-- 3D Scene Canvas -->
+    <div class="scene-container" id="sceneContainer">
+        <canvas id="canvas3d"></canvas>
+        <div class="exit-hint" id="exitHint">Type "NEBULA" on the keyboard to complete the experience</div>
+    </div>
+
+    <script>
+        // ===== CALCULATOR =====
+        let calcDisplay = '0';
+
+        function appendToCalc(value) {
+            if (calcDisplay === '0' && value !== '.') {
+                calcDisplay = value;
+            } else {
+                calcDisplay += value;
+            }
+            updateCalcDisplay();
+        }
+
+        function updateCalcDisplay() {
+            document.getElementById('calcDisplay').textContent = calcDisplay;
+        }
+
+        function clearCalc() {
+            calcDisplay = '0';
+            updateCalcDisplay();
+        }
+
+        function calculateResult() {
+            try {
+                calcDisplay = String(eval(calcDisplay));
+                updateCalcDisplay();
+            } catch (e) {
+                calcDisplay = 'Error';
+                updateCalcDisplay();
+            }
+        }
+
+        // ===== NAVIGATION =====
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.content-area').forEach(a => a.classList.remove('active'));
+                e.target.classList.add('active');
+                document.getElementById(e.target.dataset.section).classList.add('active');
+            });
+        });
+
+        // ===== 3D SCENE WITH THREE.JS =====
+        let scene, camera, renderer, desk, monitor, keyboard;
+        let typedCode = '';
+        const targetCode = 'NEBULA';
+        let scene3dActive = false;
+
+        const secretDot = document.getElementById('secretDot');
+        const sceneContainer = document.getElementById('sceneContainer');
+        const mainContent = document.getElementById('mainContent');
+
+        function initThreeJS() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0a);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1.5, 3);
+            camera.lookAt(0, 1, 0);
+
+            // Renderer
+            const canvas = document.getElementById('canvas3d');
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+
+            // Lighting
+            // Ambient light (dark room)
+            const ambientLight = new THREE.AmbientLight(0x1a1a1a, 0.3);
+            scene.add(ambientLight);
+
+            // Monitor light (bright point light from monitor)
+            const monitorLight = new THREE.PointLight(0x00ff00, 3, 50);
+            monitorLight.position.set(0, 2, 0);
+            monitorLight.castShadow = true;
+            monitorLight.shadow.mapSize.width = 2048;
+            monitorLight.shadow.mapSize.height = 2048;
+            scene.add(monitorLight);
+
+            // Additional fill light for room
+            const fillLight = new THREE.DirectionalLight(0x1a3a2a, 0.2);
+            fillLight.position.set(5, 3, 5);
+            scene.add(fillLight);
+
+            // Room walls
+            const wallMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x1a1a1a,
+                roughness: 0.9,
+                metalness: 0
+            });
+
+            // Back wall
+            const backWall = new THREE.Mesh(
+                new THREE.BoxGeometry(20, 15, 0.5),
+                wallMaterial
+            );
+            backWall.position.z = -10;
+            backWall.receiveShadow = true;
+            scene.add(backWall);
+
+            // Left wall
+            const leftWall = new THREE.Mesh(
+                new THREE.BoxGeometry(0.5, 15, 20),
+                wallMaterial
+            );
+            leftWall.position.x = -10;
+            leftWall.receiveShadow = true;
+            scene.add(leftWall);
+
+            // Right wall
+            const rightWall = new THREE.Mesh(
+                new THREE.BoxGeometry(0.5, 15, 20),
+                wallMaterial
+            );
+            rightWall.position.x = 10;
+            rightWall.receiveShadow = true;
+            scene.add(rightWall);
+
+            // Floor
+            const floor = new THREE.Mesh(
+                new THREE.BoxGeometry(20, 0.5, 20),
+                wallMaterial
+            );
+            floor.position.y = -0.5;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            // Create desk
+            createDesk();
+
+            // Create monitor
+            createMonitor();
+
+            // Create keyboard
+            createKeyboard();
+
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+
+            // Animation loop
+            animate();
+        }
+
+        function createDesk() {
+            const deskGroup = new THREE.Group();
+
+            // Desktop surface
+            const deskMaterial = new THREE.MeshStandardMaterial({
+                color: 0x3a2f2a,
+                roughness: 0.4,
+                metalness: 0.1
+            });
+
+            const deskSurface = new THREE.Mesh(
+                new THREE.BoxGeometry(4, 0.1, 2),
+                deskMaterial
+            );
+            deskSurface.position.y = 1;
+            deskSurface.castShadow = true;
+            deskSurface.receiveShadow = true;
+            deskGroup.add(deskSurface);
+
+            // Desk legs
+            const legMaterial = new THREE.MeshStandardMaterial({
+                color: 0x2a2520,
+                roughness: 0.6,
+                metalness: 0
+            });
+
+            const legGeometry = new THREE.BoxGeometry(0.15, 1, 0.15);
+
+            for (let x of [-1.8, 1.8]) {
+                for (let z of [-0.8, 0.8]) {
+                    const leg = new THREE.Mesh(legGeometry, legMaterial);
+                    leg.position.set(x, 0.5, z);
+                    leg.castShadow = true;
+                    leg.receiveShadow = true;
+                    deskGroup.add(leg);
+                }
+            }
+
+            desk = deskGroup;
+            scene.add(desk);
+        }
+
+        function createMonitor() {
+            const monitorGroup = new THREE.Group();
+
+            // Monitor stand
+            const standMaterial = new THREE.MeshStandardMaterial({
+                color: 0x333333,
+                roughness: 0.5,
+                metalness: 0.2
+            });
+
+            const stand = new THREE.Mesh(
+                new THREE.BoxGeometry(0.3, 1.5, 0.3),
+                standMaterial
+            );
+            stand.position.y = 1.5;
+            stand.castShadow = true;
+            stand.receiveShadow = true;
+            monitorGroup.add(stand);
+
+            // Monitor frame
+            const frameMaterial = new THREE.MeshStandardMaterial({
+                color: 0x222222,
+                roughness: 0.4,
+                metalness: 0.3
+            });
+
+            const frame = new THREE.Mesh(
+                new THREE.BoxGeometry(1.6, 1.2, 0.1),
+                frameMaterial
+            );
+            frame.position.set(0, 3.2, 0);
+            frame.castShadow = true;
+            frame.receiveShadow = true;
+            monitorGroup.add(frame);
+
+            // Monitor screen (emissive green)
+            const screenMaterial = new THREE.MeshStandardMaterial({
+                color: 0x00ff00,
+                emissive: 0x00ff00,
+                emissiveIntensity: 0.8,
+                roughness: 0.2,
+                metalness: 0
+            });
+
+            const screen = new THREE.Mesh(
+                new THREE.BoxGeometry(1.4, 1.0, 0.05),
+                screenMaterial
+            );
+            screen.position.set(0, 3.2, 0.08);
+            screen.castShadow = true;
+            monitorGroup.add(screen);
+
+            // Screen text (canvas texture)
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 384;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#001100';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff00';
+            ctx.font = 'bold 32px monospace';
+            ctx.textAlign = 'center';
+            updateScreenText(canvas);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const screenText = new THREE.Mesh(
+                new THREE.BoxGeometry(1.38, 0.98, 0.01),
+                new THREE.MeshStandardMaterial({ map: texture, emissiveMap: texture, emissiveIntensity: 0.6 })
+            );
+            screenText.position.set(0, 3.2, 0.1);
+            monitorGroup.add(screenText);
+
+            monitor = { group: monitorGroup, canvas, ctx };
+            scene.add(monitorGroup);
+        }
+
+        function updateScreenText(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#001100';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff00';
+            ctx.font = 'bold 48px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(typedCode, canvas.width / 2, canvas.height / 2);
+        }
+
+        function createKeyboard() {
+            const keyboardGroup = new THREE.Group();
+
+            // Keyboard base
+            const baseMaterial = new THREE.MeshStandardMaterial({
+                color: 0x4a4a4a,
+                roughness: 0.6,
+                metalness: 0.1
+            });
+
+            const keyboardBase = new THREE.Mesh(
+                new THREE.BoxGeometry(1.8, 0.1, 0.8),
+                baseMaterial
+            );
+            keyboardBase.position.set(0, 1.05, 0);
+            keyboardBase.castShadow = true;
+            keyboardBase.receiveShadow = true;
+            keyboardGroup.add(keyboardBase);
+
+            // Create keys
+            const keys = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+                          'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
+                          'Z', 'X', 'C', 'V', 'B', 'N', 'M'];
+
+            const keyMaterial = new THREE.MeshStandardMaterial({
+                color: 0xcccccc,
+                roughness: 0.3,
+                metalness: 0.2
+            });
+
+            let keyIndex = 0;
+            const keyPositions = [];
+
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 10; col++) {
+                    if (keyIndex >= keys.length) break;
+
+                    const keyX = (col - 4.5) * 0.18;
+                    const keyZ = (row - 1) * 0.22;
+
+                    const keyMesh = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.15, 0.08, 0.15),
+                        keyMaterial.clone()
+                    );
+                    keyMesh.position.set(keyX, 1.15, keyZ);
+                    keyMesh.castShadow = true;
+                    keyMesh.receiveShadow = true;
+                    keyboardGroup.add(keyMesh);
+
+                    keyPositions.push({
+                        mesh: keyMesh,
+                        letter: keys[keyIndex],
+                        originalY: 1.15
+                    });
+
+                    keyIndex++;
+                }
+            }
+
+            keyboard = { group: keyboardGroup, keys: keyPositions };
+            scene.add(keyboardGroup);
+        }
+
+        function pressPhysicalKey(letter) {
+            const keyObj = keyboard.keys.find(k => k.letter === letter);
+            if (!keyObj) return;
+
+            // Animate key press
+            const originalY = keyObj.originalY;
+            const pressedY = originalY - 0.04;
+
+            // Keydown
+            keyObj.mesh.position.y = pressedY;
+
+            // Keyup after short delay
+            setTimeout(() => {
+                keyObj.mesh.position.y = originalY;
+            }, 100);
+
+            // Add to typed code
+            typedCode += letter;
+            if (typedCode.length > 20) {
+                typedCode = typedCode.slice(-15);
+            }
+
+            // Update screen
+            updateScreenText(monitor.canvas);
+
+            // Check if complete
+            if (typedCode === targetCode) {
+                triggerEnd();
+            }
+        }
+
+        function triggerEnd() {
+            setTimeout(() => {
+                const fadeOverlay = document.createElement('div');
+                fadeOverlay.className = 'fade-to-black';
+                sceneContainer.appendChild(fadeOverlay);
+
+                setTimeout(() => {
+                    sceneContainer.classList.remove('active');
+                    mainContent.classList.remove('hidden');
+                    typedCode = '';
+                    scene3dActive = false;
+                    if (renderer) {
+                        renderer.dispose();
+                    }
+                }, 2000);
+            }, 500);
+        }
+
+        function onWindowResize() {
+            if (!scene3dActive) return;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (scene3dActive && renderer) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // Keyboard input
+        document.addEventListener('keydown', (e) => {
+            if (!scene3dActive) return;
+
+            const letter = e.key.toUpperCase();
+            if (/^[A-Z]$/.test(letter)) {
+                pressPhysicalKey(letter);
+            }
+
+            if (e.key === 'Escape') {
+                sceneContainer.classList.remove('active');
+                mainContent.classList.remove('hidden');
+                typedCode = '';
+                scene3dActive = false;
+                if (renderer) {
+                    renderer.dispose();
+                }
+            }
+        });
+
+        // Toggle scene
+        secretDot.addEventListener('click', () => {
+            sceneContainer.classList.add('active');
+            mainContent.classList.add('hidden');
+            scene3dActive = true;
+            typedCode = '';
+
+            setTimeout(() => {
+                initThreeJS();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
