@@ -15,8 +15,9 @@
             width: 100%;
             height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             background: radial-gradient(ellipse at center, #0a0015 0%, #000000 100%);
             font-family: 'Arial', sans-serif;
             overflow: hidden;
@@ -26,6 +27,7 @@
         .container {
             text-align: center;
             position: relative;
+            margin-bottom: 80px;
         }
 
         .nebula-text {
@@ -92,6 +94,49 @@
                 opacity: 1;
                 transform: translate(-50%, -50%) scale(1.2);
             }
+        }
+
+        /* Search Bar Styling */
+        .search-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .search-bar {
+            width: 500px;
+            padding: 15px 25px;
+            font-size: 16px;
+            border: 2px solid rgba(255, 0, 255, 0.3);
+            border-radius: 50px;
+            background: rgba(20, 20, 40, 0.7);
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.2),
+                        inset 0 0 20px rgba(0, 102, 255, 0.1);
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-bar:focus {
+            border-color: rgba(255, 0, 255, 0.8);
+            background: rgba(20, 20, 40, 0.9);
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.5),
+                        0 0 60px rgba(0, 102, 255, 0.3),
+                        inset 0 0 30px rgba(0, 102, 255, 0.2);
+            transform: scale(1.02);
+        }
+
+        .search-bar:hover {
+            border-color: rgba(255, 0, 255, 0.6);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3),
+                        0 0 50px rgba(0, 102, 255, 0.2);
         }
 
         /* Floating particles effect */
@@ -173,6 +218,17 @@
             <div class="glow-background"></div>
             <h1 class="nebula-text">NEBULA</h1>
         </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-bar" 
+                id="searchInput" 
+                placeholder="Search the cosmos..."
+                autocomplete="off"
+            />
+        </div>
     </div>
 
     <script>
@@ -239,6 +295,21 @@
         for (let i = 0; i < 30; i++) {
             setTimeout(createParticle, i * 100);
         }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const searchQuery = searchInput.value.trim();
+                if (searchQuery) {
+                    // Search through DuckDuckGo
+                    const duckDuckGoUrl = `https://duckduckgo.com/?q=${encodeURIComponent(searchQuery)}`;
+                    window.open(duckDuckGoUrl, '_blank');
+                    searchInput.value = '';
+                }
+            }
+        });
     </script>
 </body>
 </html>
