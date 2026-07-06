@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEBULA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(ellipse at center, #0a0015 0%, #000000 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        .nebula-text {
+            font-size: 120px;
+            font-weight: 900;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(
+                90deg,
+                #ff00ff 0%,
+                #ff1493 25%,
+                #0066ff 50%,
+                #9933ff 75%,
+                #ff00ff 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shineAcross 8s linear infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 0, 255, 0.6)) 
+                    drop-shadow(0 0 60px rgba(0, 102, 255, 0.4))
+                    drop-shadow(0 0 90px rgba(153, 51, 255, 0.3));
+            text-shadow: 0 0 40px rgba(255, 0, 255, 0.5),
+                         0 0 80px rgba(0, 102, 255, 0.3);
+        }
+
+        @keyframes shineAcross {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Additional glow effect */
+        .glow-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glow-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 200px;
+            background: radial-gradient(ellipse, rgba(255, 0, 255, 0.3) 0%, transparent 70%);
+            filter: blur(80px);
+            pointer-events: none;
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+
+        /* Floating particles effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #ff00ff, transparent);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(1);
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.6;
+            }
+            95% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Starfield background */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield background -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main container -->
+    <div class="container">
+        <div class="glow-container">
+            <div class="glow-background"></div>
+            <h1 class="nebula-text">NEBULA</h1>
+        </div>
+    </div>
+
+    <script>
+        // Create starfield
+        const starfield = document.getElementById('starfield');
+        
+        function createStars() {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starfield.appendChild(star);
+            }
+        }
+
+        createStars();
+
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 8 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            const startX = Math.random() * window.innerWidth;
+            particle.style.left = startX + 'px';
+            
+            const duration = Math.random() * 3 + 4;
+            particle.style.animationDuration = duration + 's';
+            
+            const delay = Math.random() * 2;
+            particle.style.animationDelay = delay + 's';
+            
+            // Random color - purple, pink, or blue
+            const colors = [
+                'rgba(255, 0, 255, 0.8)',  // Magenta
+                'rgba(255, 20, 147, 0.8)', // Deep Pink
+                'rgba(0, 102, 255, 0.8)',  // Blue
+                'rgba(153, 51, 255, 0.8)'  // Purple
+            ];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.background = `radial-gradient(circle, ${randomColor}, transparent)`;
+            
+            particlesContainer.appendChild(particle);
+            
+            // Remove particle after animation completes
+            setTimeout(() => {
+                particle.remove();
+            }, (duration + delay) * 1000);
+        }
+
+        // Create particles continuously
+        setInterval(createParticle, 200);
+
+        // Create initial batch of particles
+        for (let i = 0; i < 30; i++) {
+            setTimeout(createParticle, i * 100);
+        }
+    </script>
+</body>
+</html>
